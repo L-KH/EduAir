@@ -1,0 +1,16 @@
+{
+  "name": "eduair-contracts",
+  "version": "1.0.0",
+  "description": "EduAirBadge NFT contracts",
+  "scripts": {
+    "deploy": "node scripts/deploy.js",
+    "compile": "hardhat compile",
+    "mint": "node scripts/mintBadge.js"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1",
+    "hardhat": "^2.19.4",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0"
+  }
+}

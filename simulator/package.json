@@ -1,0 +1,16 @@
+{
+  "name": "eduair-simulator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Device telemetry and attendance simulator",
+  "main": "src/postDeviceReading.js",
+  "scripts": {
+    "dev": "node src/postDeviceReading.js",
+    "start": "node src/postDeviceReading.js",
+    "telemetry": "node src/postDeviceReading.js",
+    "attendance": "node src/postAttendance.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}

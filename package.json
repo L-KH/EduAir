@@ -1,0 +1,37 @@
+{
+  "name": "eduair-proof-node",
+  "version": "2.0.0",
+  "description": "Privacy-first classroom monitoring with Hedera HCS - Enhanced with attendance & noise",
+  "private": true,
+  "workspaces": [
+    "server",
+    "web",
+    "contracts",
+    "simulator"
+  ],
+  "scripts": {
+    "install:all": "cd server && npm install && cd ../web && npm install && cd ../contracts && npm install && cd ../simulator && npm install",
+    "validate": "node validate-enhanced.js",
+    "test:api": "node scripts/test-api.js",
+    "dev:server": "cd server && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "dev:telemetry": "cd simulator && npm run telemetry",
+    "dev:attendance": "cd simulator && npm run attendance"
+  },
+  "keywords": [
+    "hedera",
+    "hcs",
+    "iot",
+    "nft",
+    "web3",
+    "privacy",
+    "attendance",
+    "noise-monitoring",
+    "blockchain"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

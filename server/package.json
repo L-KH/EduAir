@@ -1,0 +1,22 @@
+{
+  "name": "eduair-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "HCS telemetry ingestion API",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "create:topic": "node src/createTopic.js",
+    "submit:test": "node src/submitSample.js"
+  },
+  "dependencies": {
+    "@hashgraph/sdk": "^2.49.2",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "math-9a": {
+    "timezone": "Africa/Casablanca",
+    "sessions": [
+      {
+        "id": "2025-10-01-0900",
+        "startIso": "2025-10-01T09:00:00+01:00",
+        "durationMin": 50
+      },
+      {
+        "id": "2025-10-01-1400",
+        "startIso": "2025-10-01T14:00:00+01:00",
+        "durationMin": 50
+      }
+    ]
+  },
+  "science-8b": {
+    "timezone": "Africa/Casablanca",
+    "sessions": [
+      {
+        "id": "2025-10-01-1000",
+        "startIso": "2025-10-01T10:00:00+01:00",
+        "durationMin": 45
+      }
+    ]
+  }
+}

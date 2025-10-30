@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAir Enhanced - Dashboard Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .header-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .wallet-section {
+            text-align: right;
+        }
+
+        .wallet-address {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .connect-btn, .tip-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .connect-btn:hover, .tip-btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .status-message {
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 5px;
+            font-size: 14px;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+            margin-top: 10px;
+        }
+
+        /* Tabs */
+        .tabs {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 5px;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            border: none;
+            background: transparent;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: normal;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #fff;
+            border-bottom: 3px solid #667eea;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+        }
+
+        .content-card.active {
+            display: block;
+        }
+
+        /* Telemetry Styles */
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sensor-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .sensor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .sensor-card.green {
+            border: 3px solid #22c55e;
+        }
+
+        .sensor-card.yellow {
+            border: 3px solid #f59e0b;
+        }
+
+        .sensor-card.red {
+            border: 3px solid #ef4444;
+        }
+
+        .sensor-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .sensor-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .sensor-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sensor-unit {
+            font-size: 18px;
+            margin-left: 5px;
+        }
+
+        .sensor-status {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .sensor-card.green .sensor-value,
+        .sensor-card.green .sensor-status {
+            color: #22c55e;
+        }
+
+        .sensor-card.yellow .sensor-value,
+        .sensor-card.yellow .sensor-status {
+            color: #f59e0b;
+        }
+
+        .sensor-card.red .sensor-value,
+        .sensor-card.red .sensor-status {
+            color: #ef4444;
+        }
+
+        /* Context Info */
+        .context-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #475569;
+            margin-top: 20px;
+        }
+
+        .context-info div {
+            margin-bottom: 5px;
+        }
+
+        .context-info strong {
+            color: #1e293b;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* Updated timestamp */
+        .updated-time {
+            font-size: 12px;
+            color: #64748b;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>🌡️ EduAir Enhanced</h1>
+                    <p class="header-subtitle">Privacy-Preserving Classroom Monitoring on Hedera</p>
+                </div>
+                <div class="wallet-section">
+                    <div class="wallet-address">✅ 0x1234...5678</div>
+                    <button class="tip-btn">💰 Tip Class (0.001 HBAR)</button>
+                </div>
+            </div>
+            <div class="status-message">
+                ✅ Connected to Hedera Testnet • Last sync: 2 seconds ago
+            </div>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+        <div class="tabs-content">
+            <button class="tab active">📊 Telemetry</button>
+            <button class="tab">🔊 Noise</button>
+            <button class="tab">👥 Attendance</button>
+            <button class="tab">⚙️ Settings</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Telemetry Tab -->
+        <div class="content-card active">
+            <div class="updated-time">Updated: 2:45:32 PM</div>
+            <h2 class="section-title">📊 Environmental Metrics</h2>
+            <p class="section-subtitle">Real-time classroom environment monitoring</p>
+
+            <div class="sensor-grid">
+                <!-- Temperature -->
+                <div class="sensor-card green">
+                    <div class="sensor-icon">🌡️</div>
+                    <div class="sensor-label">Temperature</div>
+                    <div class="sensor-value">
+                        23.5<span class="sensor-unit">°C</span>
+                    </div>
+                    <div class="sensor-status">Comfortable</div>
+                </div>
+
+                <!-- Humidity -->
+                <div class="sensor-card green">
+                    <div class="sensor-icon">💧</div>
+                    <div class="sensor-label">Humidity</div>
+                    <div class="sensor-value">
+                        45.2<span class="sensor-unit">%</span>
+                    </div>
+                    <div class="sensor-status">Comfortable</div>
+                </div>
+
+                <!-- CO2 -->
+                <div class="sensor-card yellow">
+                    <div class="sensor-icon">🫁</div>
+                    <div class="sensor-label">CO₂</div>
+                    <div class="sensor-value">
+                        780<span class="sensor-unit">ppm</span>
+                    </div>
+                    <div class="sensor-status">Good</div>
+                </div>
+
+                <!-- PM2.5 -->
+                <div class="sensor-card green">
+                    <div class="sensor-icon">💨</div>
+                    <div class="sensor-label">PM2.5</div>
+                    <div class="sensor-value">
+                        12.0<span class="sensor-unit">µg/m³</span>
+                    </div>
+                    <div class="sensor-status">Good</div>
+                </div>
+
+                <!-- Noise -->
+                <div class="sensor-card yellow">
+                    <div class="sensor-icon">🔊</div>
+                    <div class="sensor-label">Noise</div>
+                    <div class="sensor-value">
+                        62.3<span class="sensor-unit">dB</span>
+                    </div>
+                    <div class="sensor-status">Normal</div>
+                </div>
+
+                <!-- Light -->
+                <div class="sensor-card green">
+                    <div class="sensor-icon">💡</div>
+                    <div class="sensor-label">Light</div>
+                    <div class="sensor-value">
+                        310<span class="sensor-unit">lux</span>
+                    </div>
+                    <div class="sensor-status">Adequate</div>
+                </div>
+            </div>
+
+            <div class="context-info">
+                <div><strong>Class:</strong> Math 9A</div>
+                <div><strong>Session:</strong> 2025-10-01-0900</div>
+                <div><strong>Device:</strong> classroom-sensor-001</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Built with Hedera HCS • Hashio • React • Privacy-First Design</p>
+        <p style="font-size: 12px; margin-top: 5px;">🔒 No PII on-chain • 🔇 No audio recording • ✅ Open source</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAir - Noise Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            color: #1e293b;
+        }
+
+        .header-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .wallet-section {
+            text-align: right;
+        }
+
+        .wallet-address {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .tip-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .status-message {
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 5px;
+            font-size: 14px;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+            margin-top: 10px;
+        }
+
+        .tabs {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 5px;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            border: none;
+            background: transparent;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .tab.active {
+            background: #fff;
+            border-bottom: 3px solid #667eea;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        /* Noise Display */
+        .noise-display {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 4px solid #f59e0b;
+        }
+
+        .noise-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .noise-value {
+            font-size: 72px;
+            font-weight: bold;
+            color: #f59e0b;
+            margin-bottom: 10px;
+        }
+
+        .noise-unit {
+            font-size: 32px;
+            color: #92400e;
+            margin-left: 10px;
+        }
+
+        .noise-label {
+            font-size: 24px;
+            color: #92400e;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .noise-description {
+            font-size: 16px;
+            color: #78350f;
+            margin-top: 10px;
+        }
+
+        /* Noise Guide */
+        .noise-guide {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .guide-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .noise-bands {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .band {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .band.very-quiet {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #22c55e;
+        }
+
+        .band.quiet {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+
+        .band.normal {
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid #f59e0b;
+        }
+
+        .band.loud {
+            background: #fed7aa;
+            color: #9a3412;
+            border: 2px solid #f97316;
+        }
+
+        .band.very-loud {
+            background: #fecaca;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .band-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .band-range {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .band-label {
+            font-size: 14px;
+        }
+
+        /* Chart */
+        .chart-container {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .chart-placeholder {
+            background: white;
+            height: 300px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #cbd5e1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Simple SVG Chart */
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke: #f59e0b;
+            stroke-width: 3;
+        }
+
+        .chart-area {
+            fill: rgba(245, 158, 11, 0.1);
+        }
+
+        .chart-grid {
+            stroke: #e2e8f0;
+            stroke-width: 1;
+        }
+
+        .chart-label {
+            fill: #64748b;
+            font-size: 12px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        /* Privacy Note */
+        .privacy-note {
+            background: #fef9c3;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #facc15;
+            margin-top: 20px;
+        }
+
+        .privacy-note strong {
+            color: #854d0e;
+        }
+
+        .privacy-note p {
+            color: #713f12;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>🌡️ EduAir Enhanced</h1>
+                    <p class="header-subtitle">Privacy-Preserving Classroom Monitoring on Hedera</p>
+                </div>
+                <div class="wallet-section">
+                    <div class="wallet-address">✅ 0x1234...5678</div>
+                    <button class="tip-btn">💰 Tip Class (0.001 HBAR)</button>
+                </div>
+            </div>
+            <div class="status-message">
+                ✅ Connected to Hedera Testnet • Last sync: 2 seconds ago
+            </div>
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <div class="tabs-content">
+            <button class="tab">📊 Telemetry</button>
+            <button class="tab active">🔊 Noise</button>
+            <button class="tab">👥 Attendance</button>
+            <button class="tab">⚙️ Settings</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-card">
+            <h2 class="section-title">🔊 Classroom Noise Monitoring</h2>
+            <p class="section-subtitle">Real-time sound level tracking (numeric only, no audio recording)</p>
+
+            <!-- Current Noise Level -->
+            <div class="noise-display">
+                <div class="noise-icon">🗣️</div>
+                <div>
+                    <span class="noise-value">62.3</span>
+                    <span class="noise-unit">dB</span>
+                </div>
+                <div class="noise-label">Normal Conversation</div>
+                <div class="noise-description">Typical classroom discussion level</div>
+            </div>
+
+            <!-- Noise Bands Guide -->
+            <div class="noise-guide">
+                <h3 class="guide-title">📊 Noise Level Guide</h3>
+                <div class="noise-bands">
+                    <div class="band very-quiet">
+                        <div class="band-icon">🔇</div>
+                        <div class="band-range">&lt;50 dB</div>
+                        <div class="band-label">Very Quiet</div>
+                    </div>
+                    <div class="band quiet">
+                        <div class="band-icon">🤫</div>
+                        <div class="band-range">50-60 dB</div>
+                        <div class="band-label">Quiet</div>
+                    </div>
+                    <div class="band normal">
+                        <div class="band-icon">🗣️</div>
+                        <div class="band-range">60-70 dB</div>
+                        <div class="band-label">Normal</div>
+                    </div>
+                    <div class="band loud">
+                        <div class="band-icon">📢</div>
+                        <div class="band-range">70-75 dB</div>
+                        <div class="band-label">Loud</div>
+                    </div>
+                    <div class="band very-loud">
+                        <div class="band-icon">🚨</div>
+                        <div class="band-range">&gt;75 dB</div>
+                        <div class="band-label">Very Loud</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="chart-container">
+                <h3 class="chart-title">📈 Noise Level Trend (Last 30 Readings)</h3>
+                <div class="chart-placeholder">
+                    <svg class="chart-svg" viewBox="0 0 800 300">
+                        <!-- Grid lines -->
+                        <line class="chart-grid" x1="50" y1="50" x2="750" y2="50" />
+                        <line class="chart-grid" x1="50" y1="100" x2="750" y2="100" />
+                        <line class="chart-grid" x1="50" y1="150" x2="750" y2="150" />
+                        <line class="chart-grid" x1="50" y1="200" x2="750" y2="200" />
+                        <line class="chart-grid" x1="50" y1="250" x2="750" y2="250" />
+                        
+                        <!-- Y-axis labels -->
+                        <text class="chart-label" x="10" y="55">80 dB</text>
+                        <text class="chart-label" x="10" y="105">70 dB</text>
+                        <text class="chart-label" x="10" y="155">60 dB</text>
+                        <text class="chart-label" x="10" y="205">50 dB</text>
+                        <text class="chart-label" x="10" y="255">40 dB</text>
+
+                        <!-- Reference lines -->
+                        <line x1="50" y1="100" x2="750" y2="100" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5" />
+                        <line x1="50" y1="150" x2="750" y2="150" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5,5" opacity="0.5" />
+                        <line x1="50" y1="200" x2="750" y2="200" stroke="#22c55e" stroke-width="1" stroke-dasharray="5,5" opacity="0.5" />
+
+                        <!-- Data area -->
+                        <path class="chart-area" d="M 50 180 L 100 175 L 150 170 L 200 165 L 250 160 L 300 155 L 350 148 L 400 145 L 450 142 L 500 138 L 550 145 L 600 150 L 650 155 L 700 152 L 750 150 L 750 250 L 50 250 Z" />
+                        
+                        <!-- Data line -->
+                        <path class="chart-line" d="M 50 180 L 100 175 L 150 170 L 200 165 L 250 160 L 300 155 L 350 148 L 400 145 L 450 142 L 500 138 L 550 145 L 600 150 L 650 155 L 700 152 L 750 150" />
+
+                        <!-- Data points -->
+                        <circle cx="50" cy="180" r="4" fill="#f59e0b" />
+                        <circle cx="100" cy="175" r="4" fill="#f59e0b" />
+                        <circle cx="150" cy="170" r="4" fill="#f59e0b" />
+                        <circle cx="200" cy="165" r="4" fill="#f59e0b" />
+                        <circle cx="250" cy="160" r="4" fill="#f59e0b" />
+                        <circle cx="300" cy="155" r="4" fill="#f59e0b" />
+                        <circle cx="350" cy="148" r="4" fill="#f59e0b" />
+                        <circle cx="400" cy="145" r="4" fill="#f59e0b" />
+                        <circle cx="450" cy="142" r="4" fill="#f59e0b" />
+                        <circle cx="500" cy="138" r="4" fill="#f59e0b" />
+                        <circle cx="550" cy="145" r="4" fill="#f59e0b" />
+                        <circle cx="600" cy="150" r="4" fill="#f59e0b" />
+                        <circle cx="650" cy="155" r="4" fill="#f59e0b" />
+                        <circle cx="700" cy="152" r="4" fill="#f59e0b" />
+                        <circle cx="750" cy="150" r="4" fill="#f59e0b" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Current Level</div>
+                    <div class="stat-value">62.3 dB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average (30 min)</div>
+                    <div class="stat-value">58.7 dB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Peak Level</div>
+                    <div class="stat-value">72.4 dB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Readings</div>
+                    <div class="stat-value">30</div>
+                </div>
+            </div>
+
+            <!-- Privacy Note -->
+            <div class="privacy-note">
+                <strong>🔒 Privacy Note:</strong>
+                <p>We only track numeric noise levels (decibels). No audio content is ever recorded, stored, or transmitted. This ensures student privacy while providing useful environmental data.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with Hedera HCS • Hashio • React • Privacy-First Design</p>
+        <p style="font-size: 12px; margin-top: 5px;">🔒 No PII on-chain • 🔇 No audio recording • ✅ Open source</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "math-9a": {
+    "students": [
+      {
+        "studentId": "s-001",
+        "name": "Alice Johnson",
+        "cardUidHex": "04AABBCCDD"
+      },
+      {
+        "studentId": "s-002",
+        "name": "Bob Smith",
+        "cardUidHex": "0499887766"
+      },
+      {
+        "studentId": "s-003",
+        "name": "Charlie Brown",
+        "cardUidHex": "045566AABB"
+      },
+      {
+        "studentId": "s-004",
+        "name": "Diana Prince",
+        "cardUidHex": "04CCDDEE11"
+      },
+      {
+        "studentId": "s-005",
+        "name": "Eve Davis",
+        "cardUidHex": "04112233FF"
+      }
+    ]
+  },
+  "science-8b": {
+    "students": [
+      {
+        "studentId": "s-101",
+        "name": "Frank Miller",
+        "cardUidHex": "04778899AA"
+      },
+      {
+        "studentId": "s-102",
+        "name": "Grace Lee",
+        "cardUidHex": "04BBCCDD22"
+      },
+      {
+        "studentId": "s-103",
+        "name": "Henry Clark",
+        "cardUidHex": "04EEFF0033"
+      }
+    ]
+  }
+}

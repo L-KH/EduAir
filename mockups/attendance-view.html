@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAir - Attendance Tracking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            color: #1e293b;
+        }
+
+        .header-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .wallet-section {
+            text-align: right;
+        }
+
+        .wallet-address {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .tip-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .status-message {
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 5px;
+            font-size: 14px;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+            margin-top: 10px;
+        }
+
+        .tabs {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 5px;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            border: none;
+            background: transparent;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .tab.active {
+            background: #fff;
+            border-bottom: 3px solid #667eea;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card.green {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 3px solid #22c55e;
+        }
+
+        .summary-card.yellow {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 3px solid #f59e0b;
+        }
+
+        .summary-card.red {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            border: 3px solid #ef4444;
+        }
+
+        .summary-card.blue {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 3px solid #3b82f6;
+        }
+
+        .summary-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .summary-count {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-card.green .summary-count {
+            color: #166534;
+        }
+
+        .summary-card.yellow .summary-count {
+            color: #92400e;
+        }
+
+        .summary-card.red .summary-count {
+            color: #991b1b;
+        }
+
+        .summary-card.blue .summary-count {
+            color: #1e40af;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .summary-card.green .summary-label {
+            color: #166534;
+        }
+
+        .summary-card.yellow .summary-label {
+            color: #92400e;
+        }
+
+        .summary-card.red .summary-label {
+            color: #991b1b;
+        }
+
+        .summary-card.blue .summary-label {
+            color: #1e40af;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .uid-hash {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #6366f1;
+            background: #f0f9ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-badge.on-time {
+            background: #d1fae5;
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+
+        .status-badge.late {
+            background: #fed7aa;
+            color: #9a3412;
+            border: 1px solid #f97316;
+        }
+
+        .status-badge.absent {
+            background: #fecaca;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Privacy Notice */
+        .privacy-banner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 3px solid #f59e0b;
+            margin-top: 30px;
+        }
+
+        .privacy-banner h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .privacy-banner ul {
+            color: #713f12;
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>🌡️ EduAir Enhanced</h1>
+                    <p class="header-subtitle">Privacy-Preserving Classroom Monitoring on Hedera</p>
+                </div>
+                <div class="wallet-section">
+                    <div class="wallet-address">✅ 0x1234...5678</div>
+                    <button class="tip-btn">💰 Tip Class (0.001 HBAR)</button>
+                </div>
+            </div>
+            <div class="status-message">
+                ✅ Connected to Hedera Testnet • Last sync: 2 seconds ago
+            </div>
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <div class="tabs-content">
+            <button class="tab">📊 Telemetry</button>
+            <button class="tab">🔊 Noise</button>
+            <button class="tab active">👥 Attendance</button>
+            <button class="tab">⚙️ Settings</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-card">
+            <h2 class="section-title">👥 Privacy-Preserving Attendance</h2>
+            <p class="section-subtitle">Blockchain-verified attendance tracking with zero PII on-chain</p>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label class="filter-label">Class ID</label>
+                    <input type="text" class="filter-input" value="math-9a" readonly>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Session ID</label>
+                    <input type="text" class="filter-input" value="2025-10-01-0900" readonly>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-grid">
+                <div class="summary-card green">
+                    <div class="summary-icon">✅</div>
+                    <div class="summary-count">18</div>
+                    <div class="summary-label">On-Time</div>
+                </div>
+                <div class="summary-card yellow">
+                    <div class="summary-icon">⏰</div>
+                    <div class="summary-count">4</div>
+                    <div class="summary-label">Late</div>
+                </div>
+                <div class="summary-card red">
+                    <div class="summary-icon">❌</div>
+                    <div class="summary-count">3</div>
+                    <div class="summary-label">Absent</div>
+                </div>
+                <div class="summary-card blue">
+                    <div class="summary-icon">📝</div>
+                    <div class="summary-count">25</div>
+                    <div class="summary-label">Total</div>
+                </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>UID Hash (Partial)</th>
+                            <th>Status</th>
+                            <th>Timestamp</th>
+                            <th>Consensus Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="uid-hash">0x2f3a...9c4d</span></td>
+                            <td><span class="status-badge on-time">✅ On-Time</span></td>
+                            <td class="timestamp">09:01:23 AM</td>
+                            <td class="timestamp">1727774483.123456789</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x7b8e...4f2a</span></td>
+                            <td><span class="status-badge on-time">✅ On-Time</span></td>
+                            <td class="timestamp">09:02:15 AM</td>
+                            <td class="timestamp">1727774535.234567890</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0xa4c2...6d1b</span></td>
+                            <td><span class="status-badge on-time">✅ On-Time</span></td>
+                            <td class="timestamp">09:02:45 AM</td>
+                            <td class="timestamp">1727774565.345678901</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x5e9f...3a7c</span></td>
+                            <td><span class="status-badge on-time">✅ On-Time</span></td>
+                            <td class="timestamp">09:03:10 AM</td>
+                            <td class="timestamp">1727774590.456789012</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0xc1d5...8b4e</span></td>
+                            <td><span class="status-badge on-time">✅ On-Time</span></td>
+                            <td class="timestamp">09:03:55 AM</td>
+                            <td class="timestamp">1727774635.567890123</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x6f2b...9e5a</span></td>
+                            <td><span class="status-badge on-time">✅ On-Time</span></td>
+                            <td class="timestamp">09:04:20 AM</td>
+                            <td class="timestamp">1727774660.678901234</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0xd8a3...2c6f</span></td>
+                            <td><span class="status-badge late">⏰ Late</span></td>
+                            <td class="timestamp">09:07:30 AM</td>
+                            <td class="timestamp">1727774850.789012345</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x3b7e...5d8a</span></td>
+                            <td><span class="status-badge late">⏰ Late</span></td>
+                            <td class="timestamp">09:09:15 AM</td>
+                            <td class="timestamp">1727774955.890123456</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x9c4d...7f1b</span></td>
+                            <td><span class="status-badge late">⏰ Late</span></td>
+                            <td class="timestamp">09:11:45 AM</td>
+                            <td class="timestamp">1727775105.901234567</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x1a5f...4e2c</span></td>
+                            <td><span class="status-badge absent">❌ Absent</span></td>
+                            <td class="timestamp">—</td>
+                            <td class="timestamp">1727775600.012345678</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x8e2d...9a3b</span></td>
+                            <td><span class="status-badge absent">❌ Absent</span></td>
+                            <td class="timestamp">—</td>
+                            <td class="timestamp">1727775600.123456789</td>
+                        </tr>
+                        <tr>
+                            <td><span class="uid-hash">0x4c9b...6f7e</span></td>
+                            <td><span class="status-badge absent">❌ Absent</span></td>
+                            <td class="timestamp">—</td>
+                            <td class="timestamp">1727775600.234567890</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Privacy Banner -->
+            <div class="privacy-banner">
+                <h3>🔒 Privacy Features</h3>
+                <ul>
+                    <li><strong>Hashed UIDs Only:</strong> Only SHA256 hashes are published on-chain. Raw NFC card IDs never leave the device.</li>
+                    <li><strong>Session-Based Salts:</strong> Each session uses a unique salt, so the same student has different hashes across sessions.</li>
+                    <li><strong>No Student Names:</strong> Student names and IDs are stored off-chain only, never on the blockchain.</li>
+                    <li><strong>GDPR Compliant:</strong> Zero personally identifiable information (PII) is published to the public ledger.</li>
+                    <li><strong>Reversibility Impossible:</strong> Hashes cannot be reversed to identify students without the server-side roster.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with Hedera HCS • Hashio • React • Privacy-First Design</p>
+        <p style="font-size: 12px; margin-top: 5px;">🔒 No PII on-chain • 🔇 No audio recording • ✅ Open source</p>
+    </footer>
+</body>
+</html>
